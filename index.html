@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0e1116">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Courtside">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Courtside</title>
+<style>
+:root{
+  --bg:#0e1116; --card:#171b22; --card2:#1f252e; --line:#2a313c;
+  --text:#eef2f6; --muted:#8b96a5; --accent:#ff7a1a; --accent2:#ffb36b;
+  --good:#22c55e; --bad:#ef4444; --info:#3b82f6; --def:#a855f7; --warn:#eab308;
+  --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overscroll-behavior:none}
+body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulation}
+input,textarea,select{font:inherit;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px;width:100%}
+textarea{min-height:76px;resize:vertical}
+label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px;font-weight:600;letter-spacing:.02em}
+h1,h2,h3{margin:0}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:26px 0 10px}
+.wrap{max-width:560px;margin:0 auto;padding:12px 16px 110px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0 10px}
+.brand{font-weight:800;font-size:20px;letter-spacing:-.01em}
+.brand span{color:var(--accent)}
+.pill{font-size:12px;padding:5px 10px;border-radius:99px;background:var(--card2);color:var(--muted);white-space:nowrap}
+.pill.ok{color:var(--good)} .pill.off{color:var(--warn)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.btn{display:block;width:100%;padding:16px;border-radius:var(--r);background:var(--accent);color:#1a0d00;font-weight:800;font-size:17px;text-align:center}
+.btn.sec{background:var(--card2);color:var(--text);font-weight:700;border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--bad);border:1px solid #4a2326}
+.btn.small{display:inline-block;width:auto;padding:9px 14px;font-size:14px}
+.row{display:flex;gap:10px} .row>*{flex:1}
+.muted{color:var(--muted)} .tiny{font-size:12px}
+.player{display:flex;align-items:center;gap:14px}
+.jersey{width:64px;height:72px;border-radius:12px 12px 18px 18px;background:#000;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:30px;color:#fff;flex:none}
+.pname{font-size:22px;font-weight:800}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.kpi{background:var(--card2);border-radius:12px;padding:10px 8px;text-align:center}
+.kpi b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:8px 12px;border-radius:99px;background:var(--card2);color:var(--muted);font-size:13px;font-weight:600;white-space:nowrap;border:1px solid var(--line)}
+.chip.on{background:var(--accent);color:#1a0d00;border-color:var(--accent)}
+.glist .g{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.glist .g:first-child{border-top:0}
+.res{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}
+.res.W{background:#12361f;color:var(--good)} .res.L{background:#3a1618;color:var(--bad)} .res.D,.res.-{background:var(--card2);color:var(--muted)}
+.gmain{flex:1;min-width:0} .gmain b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gline{font-size:12px;color:var(--muted)}
+.banner{background:linear-gradient(135deg,#3a1d06,#2a1405);border:1px solid #6b3410;border-radius:var(--r);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--bad);display:inline-block;margin-right:6px;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.25}}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600;font-size:12px}
+.fb{background:var(--card2);border-radius:12px;padding:12px;margin-top:8px}
+.fb .q{font-size:12px;color:var(--muted);font-weight:600}
+.fb p{margin:2px 0 10px;white-space:pre-wrap}
+.hl{margin:0;padding-left:18px} .hl li{margin:6px 0}
+.rating{display:flex;gap:6px} .rating button{flex:1;padding:12px 0;font-size:24px;border-radius:12px;background:var(--card2);border:1px solid var(--line);filter:grayscale(1);opacity:.55}
+.rating button.on{filter:none;opacity:1;border-color:var(--accent);background:#2b1a0c}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#fff;color:#111;padding:10px 16px;border-radius:99px;font-weight:700;font-size:14px;z-index:50;box-shadow:0 6px 24px #0008;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.back{background:none;color:var(--muted);font-weight:700;padding:6px 0}
+
+/* LIVE */
+.live{padding:8px 10px calc(96px + env(safe-area-inset-bottom));max-width:620px;margin:0 auto}
+.lhead{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.lhead .opp{flex:1;font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.score{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px}
+.side{text-align:center}
+.side .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side .num{font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
+.side .adj{display:flex;gap:4px;justify-content:center;margin-top:4px}
+.side .adj button{background:var(--card2);border-radius:8px;padding:6px 9px;font-size:13px;font-weight:700;min-width:36px}
+.vs{color:var(--muted);font-weight:800}
+.court{display:flex;gap:8px;margin:8px 0}
+.onbtn{flex:1;padding:14px;border-radius:var(--r);font-weight:900;font-size:17px;letter-spacing:.03em;background:var(--card2);border:2px solid var(--line);color:var(--muted);display:flex;align-items:center;justify-content:center;gap:10px}
+.onbtn.on{background:#0f2d1a;border-color:var(--good);color:var(--good)}
+.onbtn .t{font-variant-numeric:tabular-nums;font-weight:700;font-size:15px;color:var(--text)}
+.periods{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:4px}
+.periods button{padding:0 12px;border-radius:10px;font-weight:800;font-size:14px;color:var(--muted);background:none}
+.periods button.on{background:var(--accent);color:#1a0d00}
+.goal{font-size:13px;background:#14202e;border:1px solid #23364d;color:#bcd3ee;border-radius:12px;padding:8px 12px;margin-bottom:8px}
+.sec-label{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--muted);margin:10px 2px 6px;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sb{position:relative;min-height:78px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);border-bottom:4px solid var(--c,var(--accent));display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;font-weight:800;font-size:15px;line-height:1.15;text-align:center;transition:transform .06s}
+.sb small{font-size:10px;font-weight:600;color:var(--muted);margin-top:3px}
+.sb .ct{position:absolute;top:5px;right:7px;font-size:13px;font-weight:900;color:var(--c,var(--accent));font-variant-numeric:tabular-nums}
+.sb:active{transform:scale(.95)}
+.sb.flash{animation:flash .35s}
+@keyframes flash{0%{background:var(--c)}100%{background:var(--card)}}
+.sb.big{min-height:92px;font-size:17px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#0b0e12ee;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:20}
+.bar button{flex:1;padding:14px 6px;border-radius:12px;font-weight:800;font-size:15px;background:var(--card2);border:1px solid var(--line)}
+.bar .fin{background:var(--accent);color:#1a0d00;border:0}
+.log{font-size:13px;margin-top:14px}
+.log .e{display:flex;justify-content:space-between;align-items:center;padding:8px 2px;border-bottom:1px solid var(--line)}
+.log .e button{background:none;color:var(--muted);font-size:18px;padding:0 6px}
+.tot{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.tot div{background:var(--card);border-radius:10px;padding:6px 2px;text-align:center}
+.tot b{display:block;font-size:18px;font-variant-numeric:tabular-nums}
+.tot span{font-size:10px;color:var(--muted);text-transform:uppercase}
+svg text{font-family:inherit}
+.modal{position:fixed;inset:0;background:#000a;z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));width:100%;max-width:560px;border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+
+<script type="module">
+/* =========================================================
+   1) FIREBASE CONFIG — paste your web app config here.
+   Leave as null to run in local-only mode (data stays on this phone).
+   ========================================================= */
+const FIREBASE_CONFIG = null;
+/* e.g.
+const FIREBASE_CONFIG = {
+  apiKey: "...",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+};
+*/
+const FB_VER = '10.12.2';
+
+/* ---------------- stat definitions ---------------- */
+// implies = extra stats auto-counted with the tap (when auto-link is on)
+const STATS = {
+  catch:  {label:'Caught pass', sub:'touch + looked for', c:'var(--info)', implies:['touch','looked'], hidden:true},
+  touch:  {label:'Touch', sub:'inbound / loose ball', short:'Touches', c:'var(--info)'},
+  pass:   {label:'Pass ✓', sub:'reached teammate', short:'Passes', c:'var(--good)'},
+  near:   {label:'Near assist', sub:'pass → missed shot', short:'Near ast', c:'var(--good)', implies:['pass']},
+  assist: {label:'Assist', sub:'pass → basket', short:'Assists', c:'var(--good)', implies:['pass']},
+  to:     {label:'Turnover', sub:'lost it', short:'Turnovers', c:'var(--bad)'},
+  make:   {label:'Shot ✓', sub:'+2 pts', short:'FG made', c:'var(--accent)', pts:2},
+  miss:   {label:'Shot ✗', sub:'attempt', short:'FG missed', c:'var(--accent)'},
+  ftm:    {label:'FT ✓', sub:'+1 pt', short:'FT made', c:'var(--accent2)', pts:1},
+  ftx:    {label:'FT ✗', sub:'attempt', short:'FT missed', c:'var(--accent2)'},
+  steal:  {label:'Steal', sub:'+ touch', short:'Steals', c:'var(--def)', implies:['touch']},
+  defl:   {label:'Deflection', sub:'got a hand on it', short:'Deflections', c:'var(--def)'},
+  reb:    {label:'Rebound', sub:'+ touch', short:'Rebounds', c:'var(--def)', implies:['touch']},
+  looked: {label:'Looked for', sub:"pass didn't arrive", short:'Looked for', c:'var(--info)'},
+  hustle: {label:'Hustle', sub:'dive / sprint back', short:'Hustle', c:'var(--warn)'},
+};
+const LAYOUT = [
+  ['Ball in hand', ['catch','touch','pass','near','assist','to']],
+  ['Shooting',     ['make','miss','ftm','ftx']],
+  ['Defence & effort', ['steal','defl','reb','looked','hustle']],
+];
+const COUNT_KEYS = ['touch','looked','pass','near','assist','to','make','miss','ftm','ftx','steal','defl','reb','hustle'];
+// metrics available for history charts
+const METRICS = {
+  touch:{label:'Touches'}, pass:{label:'Passes'}, sd:{label:'Steals+defl'}, play:{label:'Assists+near'},
+  pts:{label:'Points'}, fga:{label:'Shots'}, reb:{label:'Rebounds'}, looked:{label:'Looked for'},
+  inv10:{label:'Touches /10 min', dec:1}, min:{label:'Minutes', dec:1}, to:{label:'Turnovers'}
+};
+
+/* ---------------- state + local storage ---------------- */
+const LS_KEY = 'courtside.v1';
+const S = {
+  player:{name:'Arthur', number:'9', position:'Guard', team:''},
+  settings:{autoLink:true},
+  games:{}, profileUpdatedAt:0,
+  user:null, cloud:'local', chartMetric:'touch'
+};
+function loadLocal(){
+  try{
+    const d = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    if(d.player) Object.assign(S.player, d.player);
+    if(d.settings) Object.assign(S.settings, d.settings);
+    S.games = d.games || {}; S.profileUpdatedAt = d.profileUpdatedAt||0;
+    if(d.chartMetric) S.chartMetric = d.chartMetric;
+  }catch(e){}
+}
+function saveLocal(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify({player:S.player, settings:S.settings, games:S.games, profileUpdatedAt:S.profileUpdatedAt, chartMetric:S.chartMetric})); }catch(e){}
+}
+
+/* ---------------- cloud (Firestore) ---------------- */
+let FB = null; // {auth, db, fs, authMod}
+const pending = {};
+async function initCloud(){
+  if(!FIREBASE_CONFIG){ S.cloud='local'; return; }
+  S.cloud='connecting'; render();
+  try{
+    const base = `https://www.gstatic.com/firebasejs/${FB_VER}/`;
+    const [appMod, authMod, fs] = await Promise.all([
+      import(base+'firebase-app.js'), import(base+'firebase-auth.js'), import(base+'firebase-firestore.js')
+    ]);
+    const app = appMod.initializeApp(FIREBASE_CONFIG);
+    let db;
+    try{ db = fs.initializeFirestore(app, {localCache: fs.persistentLocalCache({tabManager: fs.persistentMultipleTabManager()})}); }
+    catch(e){ db = fs.getFirestore(app); }
+    const auth = authMod.getAuth(app);
+    FB = {auth, db, fs, authMod};
+    authMod.getRedirectResult(auth).catch(()=>{});
+    authMod.onAuthStateChanged(auth, user=>{
+      S.user = user; S.cloud = user ? 'synced' : 'signedout';
+      if(user) startSync(); render();
+    });
+  }catch(e){ console.warn(e); S.cloud='error'; render(); }
+}
+async function signIn(){
+  if(!FB) return toast('Add your Firebase config first');
+  const {authMod, auth} = FB; const p = new authMod.GoogleAuthProvider();
+  try{ await authMod.signInWithPopup(auth, p); }
+  catch(e){ if(String(e.code).includes('popup')) authMod.signInWithRedirect(auth,p); else toast('Sign-in failed: '+e.code); }
+}
+function signOutNow(){ if(FB) FB.authMod.signOut(FB.auth); }
+let unsub = [];
+function startSync(){
+  unsub.forEach(u=>u()); unsub=[];
+  const {fs, db} = FB, uid = S.user.uid;
+  unsub.push(fs.onSnapshot(fs.collection(db,'users',uid,'games'), snap=>{
+    const cloudIds = new Set();
+    snap.forEach(d=>{
+      cloudIds.add(d.id); const cg = d.data(); const lg = S.games[d.id];
+      if(!lg || (cg.updatedAt||0) >= (lg.updatedAt||0)) S.games[d.id] = {...cg, syncedAt: cg.updatedAt};
+    });
+    if(!snap.metadata.fromCache){
+      for(const id of Object.keys(S.games)){
+        if(cloudIds.has(id)) continue;
+        if(S.games[id].syncedAt) delete S.games[id];      // deleted on another device
+        else pushGame(id);                                // local-only game → upload
+      }
+    }
+    saveLocal(); if(!liveTimerActive()) render();
+  }, err=>{ console.warn(err); S.cloud='error'; render(); }));
+  unsub.push(fs.onSnapshot(fs.doc(db,'users',uid,'meta','profile'), d=>{
+    if(d.exists()){
+      const p = d.data();
+      if((p.updatedAt||0) > S.profileUpdatedAt){ Object.assign(S.player,p.player||{}); Object.assign(S.settings,p.settings||{}); S.profileUpdatedAt=p.updatedAt; saveLocal(); render(); }
+    } else pushProfile();
+  }));
+}
+const clean = o => JSON.parse(JSON.stringify(o));
+function pushGame(id){
+  if(!FB || !S.user) return;
+  clearTimeout(pending[id]);
+  pending[id] = setTimeout(async ()=>{
+    const g = S.games[id]; if(!g) return;
+    try{ const {syncedAt, ...data} = g; await FB.fs.setDoc(FB.fs.doc(FB.db,'users',S.user.uid,'games',id), clean(data)); g.syncedAt = g.updatedAt; saveLocal(); }
+    catch(e){ console.warn(e); }
+  }, 1200);
+}
+function pushProfile(){
+  if(!FB || !S.user) return;
+  FB.fs.setDoc(FB.fs.doc(FB.db,'users',S.user.uid,'meta','profile'), clean({player:S.player, settings:S.settings, updatedAt:S.profileUpdatedAt||Date.now()})).catch(console.warn);
+}
+function saveGame(g){ g.updatedAt = Date.now(); S.games[g.id]=g; saveLocal(); pushGame(g.id); }
+function saveProfile(){ S.profileUpdatedAt = Date.now(); saveLocal(); pushProfile(); }
+async function deleteGame(id){
+  delete S.games[id]; saveLocal();
+  if(FB && S.user) try{ await FB.fs.deleteDoc(FB.fs.doc(FB.db,'users',S.user.uid,'games',id)); }catch(e){}
+}
+
+/* ---------------- helpers ---------------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const todayISO = () => { const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const fmtDate = iso => { try{ return new Date(iso+'T12:00:00').toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'}); }catch(e){ return iso; } };
+const fmtClock = ms => { const s=Math.max(0,Math.floor(ms/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+const r1 = n => Math.round(n*10)/10;
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1600); }
+const buzz = () => { try{ navigator.vibrate && navigator.vibrate(12); }catch(e){} };
+const periodsOf = g => g.periods===4 ? ['Q1','Q2','Q3','Q4'] : ['H1','H2'];
+
+function stintMs(st, g){ return ((st.off ?? (g.status==='live' ? Date.now() : st.on)) - st.on); }
+function minutesOf(g){ return (g.stints||[]).reduce((a,st)=>a+stintMs(st,g),0)/60000; }
+function countEvents(evs){
+  const t={}; COUNT_KEYS.forEach(k=>t[k]=0);
+  for(const e of evs){ if(t[e.type]!==undefined) t[e.type]++; (e.implied||[]).forEach(k=>{ if(t[k]!==undefined) t[k]++; }); }
+  return t;
+}
+function derive(t, min){
+  t.fga = t.make+t.miss; t.pts = t.make*2+t.ftm; t.sd = t.steal+t.defl; t.play = t.assist+t.near;
+  t.min = min; t.inv10 = min>0 ? t.touch/min*10 : 0; return t;
+}
+function totals(g){ return derive(countEvents(g.events||[]), minutesOf(g)); }
+function result(g){
+  const a=+g.score?.us||0, b=+g.score?.them||0;
+  if(g.status==='live') return '-'; if(!a && !b) return '-';
+  return a>b?'W':a<b?'L':'D';
+}
+const sortedGames = () => Object.values(S.games).sort((a,b)=>(a.date+(a.createdAt||0)).localeCompare(b.date+(b.createdAt||0)) || (a.createdAt||0)-(b.createdAt||0));
+const finalGames = () => sortedGames().filter(g=>g.status!=='live');
+function gameNo(g){ return sortedGames().findIndex(x=>x.id===g.id)+1; }
+function lastGoalBefore(g){
+  const prev = finalGames().filter(x=>x.id!==g.id && (x.date<g.date || (x.date===g.date && (x.createdAt||0)<(g.createdAt||0))));
+  for(let i=prev.length-1;i>=0;i--){ const f=prev[i].feedback||{}; const goal=f.kid?.goal||f.parent?.focus; if(goal) return goal; }
+  return '';
+}
+
+/* ---------------- wake lock ---------------- */
+let wakeLock=null;
+async function keepAwake(on){
+  try{
+    if(on && 'wakeLock' in navigator && !wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release',()=>wakeLock=null); }
+    if(!on && wakeLock){ await wakeLock.release(); wakeLock=null; }
+  }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && route().name==='live') keepAwake(true); });
+
+/* ---------------- router ---------------- */
+function route(){ const [name,id] = location.hash.replace(/^#\/?/,'').split('/'); return {name:name||'home', id}; }
+function go(h){ location.hash = h; }
+window.addEventListener('hashchange', render);
+
+let tick=null;
+function liveTimerActive(){ return route().name==='live'; }
+function render(){
+  const r = route(); clearInterval(tick); tick=null;
+  if(r.name!=='live') keepAwake(false);
+  const app = $('#app');
+  if(r.name==='new') app.innerHTML = viewNew();
+  else if(r.name==='live' && S.games[r.id]) { app.innerHTML = viewLive(S.games[r.id]); keepAwake(true); tick=setInterval(()=>updateClock(S.games[r.id]),1000); }
+  else if(r.name==='post' && S.games[r.id]) app.innerHTML = viewPost(S.games[r.id]);
+  else if(r.name==='game' && S.games[r.id]) app.innerHTML = viewGame(S.games[r.id]);
+  else if(r.name==='settings') app.innerHTML = viewSettings();
+  else app.innerHTML = viewHome();
+  window.scrollTo(0,0);
+}
+
+/* ---------------- views: shared ---------------- */
+function cloudPill(){
+  const m = {local:['Local only','off'], connecting:['Connecting…',''], signedout:['Not signed in','off'], synced:['Synced','ok'], error:['Sync error','off']}[S.cloud]||['',''];
+  return `<span class="pill ${m[1]}">${m[0]}</span>`;
+}
+function topbar(back){
+  return `<div class="top">${back?`<button class="back" onclick="history.length>1?history.back():go('#/')">‹ Back</button>`:`<div class="brand">Court<span>side</span></div>`}
+  <div class="row" style="flex:0;gap:6px;align-items:center">${cloudPill()}<button class="pill" onclick="go('#/settings')">⚙︎</button></div></div>`;
+}
+
+/* ---------------- HOME ---------------- */
+function viewHome(){
+  const games = finalGames(); const live = sortedGames().find(g=>g.status==='live');
+  const P = S.player;
+  const tot = derive(Object.fromEntries(COUNT_KEYS.map(k=>[k,0])),0);
+  let mins=0, w=0, l=0;
+  games.forEach(g=>{ const t=totals(g); COUNT_KEYS.forEach(k=>tot[k]+=t[k]); mins+=t.min; const r=result(g); if(r==='W')w++; if(r==='L')l++; });
+  derive(tot, mins); const n = games.length||1;
+  const signIn = (S.cloud==='signedout') ? `<div class="card"><b>Sync to Firestore</b><p class="muted tiny" style="margin:4px 0 10px">Sign in so games are saved to the cloud and visible on any device.</p><button class="btn small" onclick="signIn()">Sign in with Google</button></div>` : '';
+  return `<div class="wrap">${topbar()}
+  ${live?`<div class="banner"><div><span class="dot"></span><b>Live: vs ${esc(live.opponent)}</b><div class="tiny muted">${esc(fmtDate(live.date))}</div></div><button class="btn small" onclick="go('#/live/${live.id}')">Resume</button></div>`:''}
+  ${signIn}
+  <div class="card">
+    <div class="player"><div class="jersey">${esc(P.number||'?')}</div>
+      <div><div class="pname">${esc(P.name)}</div><div class="muted">${esc(P.position)}${P.team?' · '+esc(P.team):''}</div>
+      <div class="tiny muted">${games.length} game${games.length===1?'':'s'} · ${w}W–${l}L · ${r1(mins)} min</div></div></div>
+    <div class="kpis">
+      <div class="kpi"><b>${r1(tot.touch/n)}</b><span>Touches/g</span></div>
+      <div class="kpi"><b>${r1(tot.pass/n)}</b><span>Passes/g</span></div>
+      <div class="kpi"><b>${r1(tot.sd/n)}</b><span>Stl+Defl/g</span></div>
+      <div class="kpi"><b>${r1(tot.play/n)}</b><span>Ast+Near/g</span></div>
+      <div class="kpi"><b>${r1(tot.pts/n)}</b><span>Points/g</span></div>
+      <div class="kpi"><b>${r1(tot.inv10)}</b><span>Touch/10min</span></div>
+    </div>
+  </div>
+  ${live?'':`<button class="btn" onclick="go('#/new')">🏀 Start a new game</button>`}
+  ${games.length ? viewTrend(games) + viewBests(games) : `<div class="card" style="margin-top:12px"><b>No games yet</b><p class="muted tiny" style="margin:4px 0 12px">Want last week's game in the history? It was logged in chat (vs 76ers, L 12–17).</p><button class="btn sec small" onclick="seedGame1()">Add Game 1 vs 76ers</button></div>`}
+  ${games.length?`<h2>Games</h2><div class="card glist">${games.slice().reverse().map(g=>{const t=totals(g);return `<div class="g" onclick="go('#/game/${g.id}')"><div class="res ${result(g)}">${result(g)}</div><div class="gmain"><b>G${gameNo(g)} vs ${esc(g.opponent)}</b><div class="gline">${esc(fmtDate(g.date))} · ${g.score?.us??0}–${g.score?.them??0} · ${r1(t.min)} min</div><div class="gline">${t.touch} TCH · ${t.pass} PAS · ${t.sd} STL/DEF · ${t.play} AST/NA · ${t.pts} PTS</div></div><span class="muted">›</span></div>`}).join('')}</div>`:''}
+  </div>`;
+}
+function viewTrend(games){
+  const m = S.chartMetric in METRICS ? S.chartMetric : 'touch'; const def = METRICS[m];
+  const vals = games.map(g=>totals(g)[m]);
+  const W=330,H=150,pl=10,pr=10,pt=22,pb=26; const max=Math.max(1,...vals);
+  const x = i => games.length===1 ? W/2 : pl + i*(W-pl-pr)/(games.length-1);
+  const y = v => pt + (H-pt-pb)*(1 - v/max);
+  const pts = vals.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+  const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+  const fmt = v => def.dec ? r1(v) : Math.round(v);
+  return `<h2>Trend</h2><div class="card">
+  <div class="chips">${Object.entries(METRICS).map(([k,d])=>`<button class="chip ${k===m?'on':''}" onclick="setMetric('${k}')">${d.label}</button>`).join('')}</div>
+  <svg viewBox="0 0 ${W} ${H}" width="100%" style="margin-top:10px;display:block">
+    <line x1="${pl}" x2="${W-pr}" y1="${y(avg)}" y2="${y(avg)}" stroke="#3a4350" stroke-dasharray="4 4"/>
+    <text x="${W-pr}" y="${y(avg)-5}" fill="#8b96a5" font-size="10" text-anchor="end">avg ${fmt(avg)}</text>
+    ${games.length>1?`<polyline points="${pts}" fill="none" stroke="#ff7a1a" stroke-width="2.5" stroke-linejoin="round"/>`:''}
+    ${vals.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="4.5" fill="#ff7a1a"/><text x="${x(i)}" y="${y(v)-9}" fill="#eef2f6" font-size="11" font-weight="700" text-anchor="middle">${fmt(v)}</text><text x="${x(i)}" y="${H-8}" fill="#8b96a5" font-size="10" text-anchor="middle">G${i+1}</text>`).join('')}
+  </svg></div>`;
+}
+function viewBests(games){
+  const keys = [['touch','Touches'],['pass','Passes'],['sd','Steals + deflections'],['play','Assists + near'],['pts','Points'],['reb','Rebounds']];
+  const rows = keys.map(([k,l])=>{ let best=null; games.forEach((g,i)=>{ const v=totals(g)[k]; if(v>0 && (!best||v>best.v)) best={v,g,i}; }); return best?`<tr><td>${l}</td><td><b>${best.v}</b></td><td class="muted">G${best.i+1} vs ${esc(best.g.opponent)}</td></tr>`:''; }).join('');
+  return rows?`<h2>Personal bests</h2><div class="card"><table>${rows}</table></div>`:'';
+}
+window.setMetric = k => { S.chartMetric=k; saveLocal(); render(); };
+
+/* ---------------- NEW GAME ---------------- */
+function viewNew(){
+  return `<div class="wrap">${topbar(true)}<h1 style="font-size:24px">New game</h1>
+  <label>Opponent</label><input id="n-opp" placeholder="e.g. 76ers" autocomplete="off">
+  <div class="row"><div><label>Date</label><input id="n-date" type="date" value="${todayISO()}"></div>
+  <div><label>Format</label><select id="n-per"><option value="2">2 halves</option><option value="4">4 quarters</option></select></div></div>
+  <label>Venue / court (optional)</label><input id="n-venue" placeholder="e.g. Court 3">
+  <label>Our team name (optional)</label><input id="n-team" value="${esc(S.player.team)}">
+  <div style="height:20px"></div><button class="btn" onclick="createGame()">Start tracking</button>
+  <p class="muted tiny" style="margin-top:12px">Tip: on iPhone, tap Share → Add to Home Screen so this opens full-screen. The screen stays awake while tracking.</p></div>`;
+}
+window.createGame = () => {
+  const opp = $('#n-opp').value.trim() || 'Opponent';
+  const team = $('#n-team').value.trim();
+  if(team!==S.player.team){ S.player.team=team; saveProfile(); }
+  const g = {id:uid(), createdAt:Date.now(), date:$('#n-date').value||todayISO(), opponent:opp, venue:$('#n-venue').value.trim(), team,
+    periods:+$('#n-per').value, period:'', status:'live', score:{us:0,them:0}, events:[], stints:[], feedback:{}};
+  g.period = periodsOf(g)[0]; saveGame(g); go('#/live/'+g.id);
+};
+
+/* ---------------- LIVE ---------------- */
+function viewLive(g){
+  const t = totals(g); const open = (g.stints||[]).some(s=>s.off==null);
+  const goal = lastGoalBefore(g);
+  const btn = k => { const d=STATS[k]; const ct = k==='catch' ? (g.events||[]).filter(e=>e.type==='catch').length : t[k]; return `<button class="sb ${k==='catch'||k==='pass'||k==='steal'?'big':''}" style="--c:${d.c}" data-k="${k}" onclick="tap('${k}',this)"><span class="ct">${ct||''}</span>${d.label}<small>${d.sub}</small></button>`; };
+  return `<div class="live">
+  <div class="lhead"><button class="back" onclick="go('#/')">‹ Home</button><div class="opp">G${gameNo(g)} vs ${esc(g.opponent)}</div>
+    <div class="periods">${periodsOf(g).map(p=>`<button class="${p===g.period?'on':''}" style="padding:8px 10px" onclick="setPeriod('${p}')">${p}</button>`).join('')}</div></div>
+  ${goal?`<div class="goal">🎯 <b>Goal from last game:</b> ${esc(goal)}</div>`:''}
+  <div class="score">
+    <div class="side"><div class="lab">${esc(g.team||'Us')}</div><div class="num" id="s-us">${g.score.us}</div>
+      <div class="adj"><button onclick="score('us',-1)">−</button><button onclick="score('us',1)">+1</button><button onclick="score('us',2)">+2</button><button onclick="score('us',3)">+3</button></div></div>
+    <div class="vs">–</div>
+    <div class="side"><div class="lab">${esc(g.opponent)}</div><div class="num" id="s-them">${g.score.them}</div>
+      <div class="adj"><button onclick="score('them',-1)">−</button><button onclick="score('them',1)">+1</button><button onclick="score('them',2)">+2</button><button onclick="score('them',3)">+3</button></div></div>
+  </div>
+  <div class="court"><button class="onbtn ${open?'on':''}" onclick="toggleCourt()">${open?'● ON COURT':'○ ON BENCH'} <span class="t" id="clk">${fmtClock(minutesOf(g)*60000)}</span></button></div>
+  ${LAYOUT.map(([lab,keys])=>`<div class="sec-label">${lab}</div><div class="grid" ${keys.length===4?'style="grid-template-columns:repeat(4,1fr)"':''}>${keys.map(btn).join('')}</div>`).join('')}
+  <div class="tot">
+    <div><b>${t.touch}</b><span>Touch</span></div><div><b>${t.pass}</b><span>Pass</span></div>
+    <div><b>${t.play}</b><span>Ast/NA</span></div><div><b>${t.sd}</b><span>Stl/Def</span></div><div><b>${t.pts}</b><span>Pts</span></div>
+  </div>
+  <div class="log"><div class="sec-label">Game log</div>
+    ${(g.events||[]).slice().reverse().slice(0,40).map(e=>`<div class="e"><span><b>${STATS[e.type]?.label||e.type}</b>${e.implied?.length?` <span class="muted">+ ${e.implied.map(k=>STATS[k].short||k).join(', ').toLowerCase()}</span>`:''}</span><span class="muted">${e.period} · ${new Date(e.ts).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})} <button onclick="removeEvent('${e.id}')">×</button></span></div>`).join('') || '<p class="muted">Taps will show here.</p>'}
+  </div>
+  </div>
+  <div class="bar"><button onclick="undo()">↶ Undo</button><button class="fin" onclick="finishGame()">Finish game</button></div>`;
+}
+function updateClock(g){ const c=$('#clk'); if(c && g) c.textContent = fmtClock(minutesOf(g)*60000); }
+function curGame(){ return S.games[route().id]; }
+function liveRerender(){ const y = window.scrollY; render(); window.scrollTo(0,y); }
+window.tap = (k, el) => {
+  const g = curGame(); if(!g) return; buzz();
+  if(!(g.stints||[]).some(s=>s.off==null)){ g.stints.push({period:g.period, on:Date.now(), off:null}); toast('Marked on court'); }
+  const d = STATS[k]; const e = {id:uid(), type:k, implied: S.settings.autoLink || k==='catch' ? (d.implies||[]) : [], period:g.period, ts:Date.now(), stint:g.stints.length-1};
+  if(d.pts){ e.pts=d.pts; g.score.us += d.pts; }
+  g.events.push(e); saveGame(g);
+  liveRerender();
+  const nb = document.querySelector(`.sb[data-k="${k}"]`); if(nb){ nb.classList.remove('flash'); void nb.offsetWidth; nb.classList.add('flash'); }
+};
+function reverseEvent(g,e){ if(e.pts) g.score.us = Math.max(0, g.score.us - e.pts); }
+window.undo = () => { const g=curGame(); const e=g.events.pop(); if(!e) return toast('Nothing to undo'); reverseEvent(g,e); saveGame(g); toast('Undid '+(STATS[e.type]?.label||e.type)); liveRerender(); };
+window.removeEvent = id => { const g=curGame(); const i=g.events.findIndex(e=>e.id===id); if(i<0) return; const [e]=g.events.splice(i,1); reverseEvent(g,e); saveGame(g); liveRerender(); };
+window.score = (side, n) => { const g=curGame(); g.score[side]=Math.max(0,(+g.score[side]||0)+n); buzz(); saveGame(g); $('#s-'+side).textContent=g.score[side]; };
+window.toggleCourt = () => {
+  const g=curGame(); buzz(); const open = g.stints.find(s=>s.off==null);
+  if(open){ open.off=Date.now(); toast(`Stint: ${fmtClock(open.off-open.on)}`); } else g.stints.push({period:g.period, on:Date.now(), off:null});
+  saveGame(g); liveRerender();
+};
+window.setPeriod = p => { const g=curGame(); g.period=p; const open=g.stints.find(s=>s.off==null); if(open && open.period!==p){ open.off=Date.now(); g.stints.push({period:p,on:Date.now(),off:null}); } saveGame(g); liveRerender(); };
+window.finishGame = () => {
+  if(!confirm('Finish the game? You can still edit stats afterwards.')) return;
+  const g=curGame(); const open=g.stints.find(s=>s.off==null); if(open) open.off=Date.now();
+  g.status='final'; g.finishedAt=Date.now(); saveGame(g); go('#/post/'+g.id);
+};
+
+/* ---------------- highlights ---------------- */
+function highlights(g){
+  const t=totals(g); const out=[]; const prev = finalGames().filter(x=>x.id!==g.id && x.date<=g.date && (x.createdAt||0)<(g.createdAt||Infinity));
+  if(t.touch) out.push(`<b>${t.pass} completed passes from ${t.touch} touches</b>${t.touch>=4?` — moved it on ${Math.round(t.pass/t.touch*100)}% of the time`:''}.`);
+  if(t.sd>=2) out.push(`<b>${t.sd} steals & deflections</b> — active hands on defence.`);
+  if(t.play) out.push(`<b>${t.assist} assist${t.assist===1?'':'s'} + ${t.near} near-assist${t.near===1?'':'s'}</b> — set teammates up for ${t.play} good look${t.play===1?'':'s'}.`);
+  if(t.fga) out.push(`<b>${t.fga} shot${t.fga===1?'':'s'}</b>${t.pts?` for ${t.pts} points`:''} — backed himself.`);
+  if(t.looked>=2) out.push(`Teammates <b>looked for him ${t.looked} times</b>.`);
+  const st=(g.stints||[]).filter(s=>s.off!=null); if(st.length>1){ const active = st.filter((s,i)=>(g.events||[]).some(e=>e.stint===g.stints.indexOf(s))).length; if(active===st.length) out.push(`<b>Involved in all ${st.length} stints</b> on court.`); }
+  if(prev.length){ ['touch','pass','sd','play','pts'].forEach(k=>{ const best=Math.max(...prev.map(p=>totals(p)[k])); if(t[k]>best && t[k]>0) out.push(`🏆 New personal best: <b>${METRICS[k].label.toLowerCase()} (${t[k]})</b>.`); }); }
+  return out;
+}
+
+/* ---------------- POST-GAME ---------------- */
+function ratingRow(id, val, faces){ return `<div class="rating" data-id="${id}">${faces.map((f,i)=>`<button type="button" class="${val===i+1?'on':''}" onclick="rate(this,${i+1})">${f}</button>`).join('')}</div>`; }
+window.rate = (b,n) => { const r=b.parentElement; r.dataset.val=n; r.querySelectorAll('button').forEach((x,i)=>x.classList.toggle('on',i<n && i===n-1)); };
+function viewPost(g){
+  const f=g.feedback||{}, k=f.kid||{}, p=f.parent||{}; const hl = highlights(g);
+  return `<div class="wrap">${topbar(true)}
+  <h1 style="font-size:24px">How did it go?</h1><p class="muted" style="margin-top:4px">G${gameNo(g)} vs ${esc(g.opponent)} · ${esc(fmtDate(g.date))}</p>
+  <div class="card"><div class="row"><div><label style="margin-top:0">${esc(g.team||'Us')}</label><input id="p-us" type="number" inputmode="numeric" value="${g.score.us}"></div><div><label style="margin-top:0">${esc(g.opponent)}</label><input id="p-them" type="number" inputmode="numeric" value="${g.score.them}"></div></div></div>
+  ${hl.length?`<div class="card"><b>Highlights to share</b><ul class="hl">${hl.map(h=>`<li>${h}</li>`).join('')}</ul></div>`:''}
+  <h2>${esc(S.player.name)}'s reflection</h2><div class="card">
+    <label style="margin-top:0">How did you feel about your game?</label>${ratingRow('k-feel',k.feel,['😞','😕','🙂','😀','🤩'])}
+    <label>Something I did well</label><textarea id="k-well" placeholder="e.g. my passing">${esc(k.well)}</textarea>
+    <label>Something that surprised me</label><textarea id="k-surprise" placeholder="e.g. how many steals I got">${esc(k.surprise)}</textarea>
+    <label>Something to work on</label><textarea id="k-work">${esc(k.work)}</textarea>
+    <label>My goal for next game</label><input id="k-goal" placeholder="e.g. get my hands on the ball 5+ times" value="${esc(k.goal)}">
+  </div>
+  <h2>Dad's feedback</h2><div class="card">
+    <label style="margin-top:0">Effort</label>${ratingRow('p-effort',p.effort,['1','2','3','4','5'].map(n=>'⭐'))}
+    <label>What I loved watching</label><textarea id="p-loved">${esc(p.loved)}</textarea>
+    <label>Proud of</label><textarea id="p-proud">${esc(p.proud)}</textarea>
+    <label>One focus for next time</label><input id="p-focus" value="${esc(p.focus)}">
+  </div>
+  <label>Game notes (optional)</label><textarea id="p-notes" placeholder="coach comments, team context…">${esc(g.notes)}</textarea>
+  <div style="height:16px"></div><button class="btn" onclick="savePost()">Save game</button></div>`;
+}
+window.savePost = () => {
+  const g=curGame(); const val=id=>$(id).value.trim(); const rv=id=>+(document.querySelector(`.rating[data-id="${id}"] .on`) ? [...document.querySelectorAll(`.rating[data-id="${id}"] button`)].findIndex(b=>b.classList.contains('on'))+1 : 0);
+  g.score={us:+val('#p-us')||0, them:+val('#p-them')||0};
+  g.feedback={ kid:{feel:rv('k-feel'), well:val('#k-well'), surprise:val('#k-surprise'), work:val('#k-work'), goal:val('#k-goal')},
+               parent:{effort:rv('p-effort'), loved:val('#p-loved'), proud:val('#p-proud'), focus:val('#p-focus')} };
+  g.notes = val('#p-notes'); g.status='final'; saveGame(g); toast('Saved'); go('#/game/'+g.id);
+};
+
+/* ---------------- GAME DETAIL ---------------- */
+function viewGame(g){
+  const t=totals(g); const f=g.feedback||{}, k=f.kid||{}, p=f.parent||{};
+  const faces=['😞','😕','🙂','😀','🤩'];
+  const rows = [['Minutes',r1(t.min)],['Touches',t.touch],['Passes completed',t.pass],['Assists',t.assist],['Near-assists',t.near],['Steals',t.steal],['Deflections',t.defl],['Rebounds',t.reb],['Shots (made/att)',`${t.make}/${t.fga}`],['Free throws',`${t.ftm}/${t.ftm+t.ftx}`],['Points',t.pts],['Looked for',t.looked],['Hustle plays',t.hustle],['Turnovers',t.to]];
+  const stints = (g.stints||[]).map((s,i)=>{ const st=derive(countEvents((g.events||[]).filter(e=>e.stint===i)), stintMs(s,g)/60000); return `<tr><td>${i+1} · ${s.period}</td><td>${r1(st.min)}</td><td>${st.touch}</td><td>${st.pass}</td><td>${st.sd}</td><td>${st.play}</td><td>${st.fga}</td></tr>`; }).join('');
+  const unassigned = (g.events||[]).filter(e=>e.stint==null||e.stint<0).length;
+  const fbItem=(q,a)=>a?`<div class="q">${q}</div><p>${esc(a)}</p>`:'';
+  const hasK = k.feel||k.well||k.surprise||k.work||k.goal, hasP = p.effort||p.loved||p.proud||p.focus;
+  return `<div class="wrap">${topbar(true)}
+  <div class="player"><div class="res ${result(g)}" style="width:54px;height:54px;font-size:20px">${result(g)}</div>
+   <div><div class="pname">G${gameNo(g)} vs ${esc(g.opponent)}</div><div class="muted">${esc(fmtDate(g.date))}${g.venue?' · '+esc(g.venue):''} · ${g.score.us}–${g.score.them}</div></div></div>
+  ${highlights(g).length?`<div class="card" style="margin-top:14px"><b>Highlights</b><ul class="hl">${highlights(g).map(h=>`<li>${h}</li>`).join('')}</ul></div>`:''}
+  <h2>Stat line</h2><div class="card"><table>${rows.map(([a,b])=>`<tr><td>${a}</td><td><b>${b}</b></td></tr>`).join('')}</table></div>
+  ${stints?`<h2>By stint</h2><div class="card" style="overflow-x:auto"><table><tr><th>Stint</th><th>Min</th><th>TCH</th><th>PAS</th><th>S/D</th><th>A/NA</th><th>SH</th></tr>${stints}</table>${unassigned?`<p class="tiny muted">${unassigned} stat${unassigned>1?'s':''} added after the game aren't split by stint.</p>`:''}</div>`:''}
+  <h2>Reflections</h2>
+  <div class="card"><b>${esc(S.player.name)}</b>${hasK?`<div class="fb">${k.feel?`<div class="q">Feeling</div><p style="font-size:24px">${faces[k.feel-1]}</p>`:''}${fbItem('Did well',k.well)}${fbItem('Surprised me',k.surprise)}${fbItem('Work on',k.work)}${fbItem('Goal for next game',k.goal)}</div>`:'<p class="muted tiny">Not filled in yet.</p>'}</div>
+  <div class="card"><b>Dad</b>${hasP?`<div class="fb">${p.effort?`<div class="q">Effort</div><p>${'⭐'.repeat(p.effort)}</p>`:''}${fbItem('Loved watching',p.loved)}${fbItem('Proud of',p.proud)}${fbItem('Focus next time',p.focus)}</div>`:'<p class="muted tiny">Not filled in yet.</p>'}</div>
+  ${g.notes?`<div class="card"><b>Notes</b><p style="white-space:pre-wrap;margin:6px 0 0">${esc(g.notes)}</p></div>`:''}
+  <div class="row" style="margin-top:8px"><button class="btn sec" onclick="go('#/post/${g.id}')">Edit feedback</button><button class="btn sec" onclick="reopen('${g.id}')">Edit stats</button></div>
+  <div style="height:10px"></div><button class="btn danger" onclick="delGame('${g.id}')">Delete game</button></div>`;
+}
+window.reopen = id => { const g=S.games[id]; g.status='live'; saveGame(g); toast('Tap ON COURT if adding live minutes'); go('#/live/'+id); };
+window.delGame = id => { if(confirm('Delete this game permanently?')){ deleteGame(id); go('#/'); } };
+
+/* ---------------- SETTINGS ---------------- */
+function viewSettings(){
+  const P=S.player;
+  const cloud = !FIREBASE_CONFIG ? `<p class="muted tiny">Running in local-only mode. Paste your Firebase config at the top of <code>index.html</code> to sync to Firestore.</p>`
+    : S.user ? `<p class="tiny">Signed in as <b>${esc(S.user.email||S.user.displayName)}</b></p><button class="btn sec small" onclick="signOutNow()">Sign out</button>`
+    : `<button class="btn small" onclick="signIn()">Sign in with Google</button>`;
+  return `<div class="wrap">${topbar(true)}<h1 style="font-size:24px">Settings</h1>
+  <h2>Player</h2><div class="card">
+    <label style="margin-top:0">Name</label><input id="s-name" value="${esc(P.name)}">
+    <div class="row"><div><label>Number</label><input id="s-num" inputmode="numeric" value="${esc(P.number)}"></div><div><label>Position</label><input id="s-pos" value="${esc(P.position)}"></div></div>
+    <label>Team</label><input id="s-team" value="${esc(P.team)}">
+    <label style="display:flex;align-items:center;gap:10px;color:var(--text);font-size:15px;margin-top:16px"><input id="s-link" type="checkbox" style="width:22px;height:22px" ${S.settings.autoLink?'checked':''}> Auto-link stats</label>
+    <p class="tiny muted" style="margin:4px 0 0">Steal & rebound also add a touch. Assist & near-assist also add a completed pass. "Caught pass" always adds touch + looked for.</p>
+    <div style="height:12px"></div><button class="btn small" onclick="saveSettings()">Save</button>
+  </div>
+  <h2>Cloud sync</h2><div class="card">${cloud}</div>
+  <h2>Backup</h2><div class="card">
+    <div class="row"><button class="btn sec small" onclick="exportData()">Export JSON</button><button class="btn sec small" onclick="$('#imp').click()">Import JSON</button></div>
+    <input id="imp" type="file" accept="application/json" style="display:none" onchange="importData(this)">
+    ${Object.values(S.games).some(g=>g.seed)?'':`<div style="height:10px"></div><button class="btn sec small" onclick="seedGame1()">Add Game 1 vs 76ers (from chat log)</button>`}
+  </div></div>`;
+}
+window.saveSettings = () => {
+  Object.assign(S.player,{name:$('#s-name').value.trim()||'Player', number:$('#s-num').value.trim(), position:$('#s-pos').value.trim(), team:$('#s-team').value.trim()});
+  S.settings.autoLink = $('#s-link').checked; saveProfile(); toast('Saved'); render();
+};
+window.exportData = () => {
+  const blob = new Blob([JSON.stringify({player:S.player, settings:S.settings, games:S.games, exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`courtside-${todayISO()}.json`; a.click();
+};
+window.importData = input => {
+  const f=input.files[0]; if(!f) return; const rd=new FileReader();
+  rd.onload = () => { try{ const d=JSON.parse(rd.result); let n=0; Object.values(d.games||{}).forEach(g=>{ if(!S.games[g.id] || (g.updatedAt||0)>(S.games[g.id].updatedAt||0)){ delete g.syncedAt; S.games[g.id]=g; pushGame(g.id); n++; } }); saveLocal(); toast(`Imported ${n} game${n===1?'':'s'}`); render(); }catch(e){ toast('Not a valid backup file'); } };
+  rd.readAsText(f);
+};
+window.signIn = signIn; window.signOutNow = signOutNow; window.go = go; window.$ = $;
+
+/* ---------------- seed: Game 1 from the chat log (17 Oct 2026) ---------------- */
+window.seedGame1 = () => {
+  if(Object.values(S.games).some(g=>g.seed==='g1-76ers')) return toast('Already added');
+  const T = s => new Date(`2026-10-17T${s}:00+10:30`).getTime();
+  const stints = [{period:'H1', on:T('10:22'), off:T('10:22')+8*60000}, {period:'H2', on:T('10:37'), off:T('10:37')+6.5*60000}, {period:'H2', on:T('10:46'), off:T('10:46')+4.5*60000}];
+  const plan = [
+    ['touch','miss','looked','steal','pass'],                                   // stint 1
+    ['catch','pass','touch','pass','steal','defl','touch','pass','catch','pass'], // stint 2
+    ['touch','pass','steal','miss','miss','pass','steal','pass','touch','to'],    // stint 3
+  ];
+  const events=[]; plan.forEach((list,si)=>{ const s=stints[si], step=(s.off-s.on)/(list.length+1);
+    list.forEach((k,i)=>events.push({id:uid(), type:k, implied:STATS[k].implies||[], period:s.period, stint:si, ts:Math.round(s.on+step*(i+1))})); });
+  // 2 near-assists added after the game (not split by stint, and not double-counted as passes)
+  events.push({id:uid(), type:'near', implied:[], period:'H2', stint:-1, ts:T('10:57')}, {id:uid(), type:'near', implied:[], period:'H2', stint:-1, ts:T('10:57')});
+  const g = {id:uid(), seed:'g1-76ers', createdAt:T('10:22'), date:'2026-10-17', opponent:'76ers', venue:'', team:S.player.team, periods:2, period:'H2', status:'final',
+    score:{us:12, them:17}, events, stints,
+    feedback:{kid:{well:'Passing', surprise:"Didn't realise I had that many steals"}, parent:{}},
+    notes:'First game. Logged live by chat and imported. Approx. minutes.'};
+  saveGame(g); toast('Game 1 added'); go('#/');
+};
+
+/* ---------------- boot ---------------- */
+loadLocal(); render(); initCloud();
+</script>
+</body>
+</html>
